@@ -1,41 +1,17 @@
-use chrono::{DateTime, Local};
 use dotenv::dotenv;
-use sqlx::postgres::{PgPoolOptions, PgQueryResult};
-use sqlx::types::ipnetwork::IpNetwork;
-use sqlx::{Error, Pool, Postgres};
+use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres};
 use std::env;
 
-pub struct Message {
-    id: i64,
-    content: String,
-    title: Option<String>,
-    author: Option<String>,
-    created_at: DateTime<Local>,
-    ip: IpNetwork,
-}
+mod messages;
 
-pub struct NewMessage<'a> {
-    pub title: Option<&'a str>,
-    pub author: Option<&'a str>,
-    pub content: &'a str,
-    pub ip: IpNetwork,
-}
+pub use messages::Message;
+pub use messages::NewMessage;
+pub use messages::get_messages;
+pub use messages::insert_message;
 
-impl NewMessage<'_> {
-    pub fn new<'a>(
-        title: Option<&'a str>,
-        author: Option<&'a str>,
-        content: &'a str,
-        ip: IpNetwork,
-    ) -> NewMessage<'a> {
-        NewMessage {
-            title,
-            author,
-            content,
-            ip,
-        }
-    }
-}
+mod prints;
+pub use prints::insert_print;
 
 pub async fn get_connection_pool() -> Pool<Postgres> {
     dotenv().ok();
@@ -53,19 +29,4 @@ pub async fn get_connection_pool() -> Pool<Postgres> {
         .expect("no migration no cookies.");
 
     pool
-}
-
-pub async fn insert_message(
-    pool: &sqlx::PgPool,
-    msg: NewMessage<'_>,
-) -> Result<PgQueryResult, Error> {
-    sqlx::query!(
-        "INSERT INTO messages (title, author, content, ip) VALUES ($1, $2, $3, $4);",
-        msg.title,
-        msg.author,
-        msg.content,
-        msg.ip,
-    )
-    .execute(pool)
-    .await
 }

@@ -1,4 +1,3 @@
-use escpos::errors::PrinterError;
 use escpos::printer::Printer;
 use escpos::ui::line::{LineBuilder, LineStyle};
 use escpos::utils::*;
@@ -65,9 +64,10 @@ pub fn print(print_data: PrintData) -> Result<()> {
 
     if let Some(title) = &print_data.title {
         printer.writeln(title)?;
+        printer.draw_line(simple_line)?;
     }
-
-    printer.draw_line(simple_line)?.reset_size()?.bold(false)?;
+    printer.reset_size()?;
+    printer.bold(false)?;
 
     for line in print_data.message.lines() {
         printer.writeln(line)?;

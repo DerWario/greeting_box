@@ -1,7 +1,6 @@
 mod db;
 mod print;
 mod web_server;
-use axum::{Router, routing::get};
 
 #[tokio::main]
 async fn main() {
