@@ -7,3 +7,7 @@ edition = "2024"
 axum = "0.8.7"
 escpos = { version = "0.17.0", features = ["full"] }
 tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "ipnetwork", "tls-rustls", "postgres", "chrono", "migrate"] }
+dotenv = "0.15.0"
+chrono = { version = "0.4.42", features = ["alloc", "std", "clock", "now", "serde"] }
+serde = { version = "1.0.228", features = ["derive"] }
